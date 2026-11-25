@@ -3,6 +3,7 @@
 use App\Enums\InterestMethod;
 use App\Models\Group;
 use App\Models\Member;
+use App\Models\Scopes\GroupScope;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\UniqueConstraintViolationException;
 
@@ -28,10 +29,11 @@ it('rejects a duplicate phone number within the same group', function () {
 })->throws(UniqueConstraintViolationException::class);
 
 it('allows the same phone number in different groups', function () {
-    Member::factory()->create(['phone' => '+254712345678']);
-    Member::factory()->create(['phone' => '+254712345678']);
+    $first = Member::factory()->create(['phone' => '+254712345678']);
+    $second = Member::factory()->create(['phone' => '+254712345678']);
 
-    expect(Member::count())->toBe(2);
+    expect($first->group_id)->not->toBe($second->group_id)
+        ->and(Member::withoutGlobalScope(GroupScope::class)->count())->toBe(2);
 });
 
 it('prevents deleting a group that still has members', function () {
