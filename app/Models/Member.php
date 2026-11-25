@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Enums\MemberStatus;
+use App\Models\Concerns\BelongsToGroup;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Member extends Model
 {
+    use BelongsToGroup;
     use HasFactory;
 
     protected $fillable = [
