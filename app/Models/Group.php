@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Actions\Groups\ProvisionGroupRoles;
 use App\Enums\InterestMethod;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,6 +20,13 @@ class Group extends Model
         'late_penalty_bps',
         'loan_limit_multiplier',
     ];
+
+    protected static function booted(): void
+    {
+        static::created(function (Group $group): void {
+            app(ProvisionGroupRoles::class)->handle($group);
+        });
+    }
 
     protected function casts(): array
     {
